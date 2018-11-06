@@ -1,0 +1,67 @@
+#将plt文件转化为csv文件
+import os
+
+import pandas as pd
+
+# os.walk()读取目录的内容
+for root, dirs, files in os.walk("E:\Geolife Trajectories 1.3\Data", topdown=False):
+    # 初始化
+    fields = {
+
+        'Id': [],
+
+        "Latitude": [],
+
+        'Longitude': [],
+
+        'Altitude': [],
+
+        'Date': [],
+
+        'Time': []
+
+    }
+    # 读取每个文件夹里的文件
+    for name in files:
+
+        if 'plt' in name:
+            # 将文件名划分，从而为后面命名做基础
+            userid = root.split('\\')[3]
+            #print(userid)
+            filepath = os.path.join(root, name)
+            #读取文件里面的内容
+            with open(filepath) as fp:
+
+                lines = fp.readlines()
+
+                lines = lines[6:]
+
+                for line in lines:
+
+                    tempsplit = line.split(',')
+
+                    latitude = tempsplit[0]
+
+                    longitude = tempsplit[1]
+
+                    altitude = tempsplit[3]
+
+                    tempdate = tempsplit[5]
+
+                    temptime = tempsplit[6]
+
+                    fields['Id'].append(str(userid))
+                    #print(userid)
+                    fields['Latitude'].append(latitude)
+
+                    fields['Longitude'].append(longitude)
+
+                    fields['Altitude'].append(altitude)
+
+                    fields['Date'].append(tempdate)
+
+                    fields['Time'].append(temptime[:-1])
+
+            pf = pd.DataFrame(fields)
+
+            pf.to_csv('./data'+ str(userid)+'.csv')
